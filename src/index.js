@@ -1,3 +1,3 @@
 import middleware from './lib/middleware';
 
-export { middleware }
+export { middleware };

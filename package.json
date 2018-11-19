@@ -1,13 +1,15 @@
 {
-  "name": "validMe.js",
-  "version": "1.0.0",
+  "name": "valid_me_js",
+  "version": "1.0.1",
   "description": "a validator middleware",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "repository": "https://github.com/JojiAndela/validMejs.git",
   "author": "jojitoon",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --watch --require @babel/register"
+    "test": "nyc mocha --require @babel/register --exit",
+    "coverage": "nyc --reporter=lcov --reporter=text-lcov npm test",
+    "prepublish": "babel ./src --out-dir dist"
   },
   "dependencies": {
     "validator": "^10.9.0"
@@ -19,6 +21,7 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.6",
     "chai": "^4.2.0",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
   }
 }
