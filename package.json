@@ -1,0 +1,24 @@
+{
+  "name": "validMe.js",
+  "version": "1.0.0",
+  "description": "a validator middleware",
+  "main": "index.js",
+  "repository": "https://github.com/JojiAndela/validMejs.git",
+  "author": "jojitoon",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha --watch --require @babel/register"
+  },
+  "dependencies": {
+    "validator": "^10.9.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/node": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  }
+}
