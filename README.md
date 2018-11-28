@@ -6,7 +6,7 @@ your middleware validating assistant. just super easy and flexible...
 
 # Installation
 ```bash
-npm install express-validator
+npm install valid_me_js
 ```
 Also make sure that you have Node.js 6 or newer in order to use it.
 
