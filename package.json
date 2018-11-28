@@ -1,6 +1,6 @@
 {
   "name": "valid_me_js",
-  "version": "1.0.1",
+  "version": "1.0.7",
   "description": "a validator middleware",
   "main": "./dist/index.js",
   "repository": "https://github.com/JojiAndela/validMejs.git",
@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "test": "nyc mocha --require @babel/register --exit",
+    "watch": "nyc mocha --require @babel/register --watch",
     "coverage": "nyc --reporter=lcov --reporter=text-lcov npm test",
     "prepublish": "babel ./src --out-dir dist"
   },
