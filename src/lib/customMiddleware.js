@@ -8,127 +8,132 @@ const options = validate => ({
    * @param  {string} name
    * @param  {string} variable,
    */
-  isEmail: (name='email', variable=name) => {
+  isEmail: (name='email', message=`${name.charAt(0).toUpperCase() + name.slice(1)} must be a valid email`) => {
     checkAndPush(
       validate.req.body[name] && !isEmail(validate.req.body[name]),
-      `${variable.charAt(0).toUpperCase() + variable.slice(1)} must be a valid email`,
+      message,
       validate );
     return options(validate);
   },
 
-  hasElement: (item, variable=item) => {
+  hasElement: (item, message=`${item} is required`) => {
     checkAndPush(
       !validate.req.body[item],
-      `${variable} is required`,
+      message,
       validate
       );
       return options(validate);
   },
 
-  isLength: (item, value, variable=item) => {
+  isLength: (item, value, message=`${item} must have at least a length of ${value}`) => {
     checkAndPush(
       validate.req.body[item] && validate.req.body[item].replace(/\s/g, '').length < value,
-      `${variable} must have at least a length of ${value}`,
+      message,
       validate
     );
     return options(validate);
   },
 
-  hasSpaces: (item, variable=item) => {
+  hasSpaces: (item, message=`${item} must not have spaces`)=> {
     checkAndPush(
       validate.req.body[item] && /\s/.test(validate.req.body[item]),
-      `${variable} must not have spaces`,
+      message,
       validate
     );
     return options(validate);
   },
 
-  isBool: (item, variable=item) => {
-    checkTypeOf(validate.req.body[item], 'boolean', `${variable} must be a boolean`, validate);
+  isBool: (item, message=`${item} must be a boolean`) => {
+    checkTypeOf(validate.req.body[item], 'boolean', message, validate);
     return options(validate)
   },
 
-  isNumber: (item, variable=item) => {
+  isNumber: (item, message=`${item} must be a number`) => {
     checkAndPush(
       typeof validate.req.body[item] !== 'number' || isNaN(validate.req.body[item]),
-      `${variable} must be a number`,
+      message,
       validate
     );
     return options(validate);
   },
 
-  isString: (item, variable=item) => {
-    checkTypeOf(validate.req.body[item], 'string', `${variable} must be a string`, validate);
+  isString: (item, message=`${item} must be a string`) => {
+    checkTypeOf(validate.req.body[item], 'string', message, validate);
     return options(validate)
   },
 
-  isPassword: (item,variable=item, length=4, hasUpper=false, hasNumber=false, hasSpecial=false) => {
+  isPassword: (item, length=4, hasUpper=false, hasNumber=false, hasSpecial=false, message={
+    length: `${item} must have a minimum length of ${length}`,
+    upper: `${item} must have contain an uppercase letter`,
+    number:  `${item} must have contain a number`,
+    special: `${item} must have contain an special character`
+  }) => {
     const upper = /[A-Z]/g;
     const num = /[0-9]/g;
     const special = /[!@#$%^&*(),.?":{}|<>]/g;
-    checkAndPush(validate.req.body[item] && validate.req.body[item].length < length, `${variable} must have a minimum length of ${length}`, validate);
+    checkAndPush(validate.req.body[item] && validate.req.body[item].length < length, message.length, validate);
     
     if(hasUpper){
-      checkAndPush(validate.req.body[item] && !upper.test(validate.req.body[item]), `${variable} must have contain an uppercase letter`, validate);
+      checkAndPush(validate.req.body[item] && !upper.test(validate.req.body[item]), message.upper, validate);
     }
     if(hasNumber){
-      checkAndPush(validate.req.body[item] && !num.test(validate.req.body[item]), `${variable} must have contain a number`, validate);
+      checkAndPush(validate.req.body[item] && !num.test(validate.req.body[item]), message.number, validate);
     }
     if(hasSpecial){
-      checkAndPush(validate.req.body[item] && !special.test(validate.req.body[item]), `${variable} must have contain an special character`, validate);
+      checkAndPush(validate.req.body[item] && !special.test(validate.req.body[item]), message.special , validate);
     }
     return options(validate)
   },
 
-  isPhoneNumber: (item, variable=item, length=11) => {
+  isPhoneNumber: (item, length=11, message=`${item} must be a valid phone number`) => {
     const pattern = `^(([+]{1}[0-9]{2}|0)[0-9]{${length-1}})$`
     const phone = new RegExp(pattern, 'g');
 
     checkAndPush(
        validate.req.body[item] && !phone.test(validate.req.body[item]), 
-       `${variable} must be a valid phone number`, validate);
-    return options(validate)
+       message, validate);
+    return options(validate)  
   },
 
-  isDateFormat: (item, variable=item) => {
+  isDateFormat: (item, message=`${item} must be a valid date`) => {
   const date = /^((0?[13578]|10|12)(-|\/)(([1-9])|(0[1-9])|([12])([0-9]?)|(3[01]?))(-|\/)((19)([2-9])(\d{1})|(20)([01])(\d{1})|([8901])(\d{1}))|(0?[2469]|11)(-|\/)(([1-9])|(0[1-9])|([12])([0-9]?)|(3[0]?))(-|\/)((19)([2-9])(\d{1})|(20)([01])(\d{1})|([8901])(\d{1})))$/g;
     
      checkAndPush(
        validate.req.body[item] && !date.test(validate.req.body[item]), 
-       `${variable} must be a valid date`, validate);
+       message, validate);
     return options(validate)
   },
 
-  isUrl: (item, variable=item) => {
+  isUrl: (item, message=`${item} must be a valid URL`) => {
     const url = /(http[s]?:\/\/)?[^\s(["<,>]*\.[^\s[",><]*/igm;
 
      checkAndPush(
        validate.req.body[item] && !url.test(validate.req.body[item]), 
-       `${variable} must be a valid URL`, validate);
+       message, validate);
     return options(validate)
   },
 
-  isDate: (item, variable=item) => {
+  isDate: (item, message=`${item} must be a date`) => {
       const date = new Date(validate.req.body[item]);
-      checkAndPush(date.toDateString() === 'Invalid Date', `${variable} must be a date`, validate);
+      checkAndPush(date.toDateString() === 'Invalid Date', message, validate);
       return options(validate);
   },
 
 
-  isDatePast: (date, variable=date, compare = new Date()) => {
-    checkPast(date, compare, variable, validate, true);
+  isDatePast: (date, compare = new Date(), message=`${date} is an invalid date. Must not be later than ${new Date().toDateString()}`) => {
+    checkPast(date, compare, validate, true, message);
     return options(validate);
   },
 
-  isDateFuture: (date, variable=date, compare = new Date()) => {
-    checkPast(date, compare, variable, validate, false);
+  isDateFuture: (date, compare = new Date(), message=`${date} is an invalid date. Must not be further than ${new Date().toDateString()}`) => {
+    checkPast(date, compare, validate, false, message);
   return options(validate);
 },
 
-  check: () => {
+  check: (message='Invalid Parameters') => {
     if (validate.errors.length > 0) {
       return validate.res.status(400).send({
-        message: 'Invalid Parameters',
+        message,
         errors: validate.errors,
       });
     }
@@ -154,12 +159,9 @@ const checkAndPush = (condition, message, validate) => {
   }
 };
 
-const checkPast = (date, compare, variable, validate, check=false) => {
+const checkPast = (date, compare, validate, check=false, message) => {
     const checkDate = new Date(validate.req.body[date]);
     const today = new Date(compare);
-    const message = check
-                      ?`${variable} is an invalid date. Must not be later than ${today.toDateString()}`
-                      :`${variable} is an invalid date. Must not be further than ${today.toDateString()}`;
 
     checkDate.setUTCHours(0);
     checkDate.setUTCMinutes(0);
