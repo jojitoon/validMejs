@@ -84,4 +84,3 @@ MIT License
 
 # Code of Conduct
 Everyone interacting in the NgBanks project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/%5BUSERNAME%5D/validmejs/blob/master/CODE_OF_CONDUCT.md).
-
