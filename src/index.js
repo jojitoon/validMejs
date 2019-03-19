@@ -1,3 +1,5 @@
 import middleware from './lib/middleware';
+import customMiddleware from './lib/customMiddleware';
+import validate from './lib/validate';
 
-export { middleware }
+export { middleware, customMiddleware, validate };
