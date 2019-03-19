@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { middleware, customMiddleware } from '../src';
+import { middleware, customMiddleware, validate} from '../src';
 
 const options = item => ({
     status: (status) => {
@@ -13,6 +13,7 @@ const options = item => ({
     }
 })
 
+const valid = {valid: true, errors: []};
 const res = options({});
 const req = {
     body: {
@@ -27,7 +28,8 @@ const req = {
         password: 'Password@1',
         pass: 'pass',
         phone: '07037881413',
-        url: 'https://google.com'
+        url: 'https://google.com',
+        uuid: '5808bee3-8b70-42be-9684-89c9450b4154'
     }
 };
 
@@ -80,7 +82,8 @@ describe('middleware test', () => {
                                            "tex is required",
                                            "date must be a boolean"
                                          ],
-                                         message: "Invalid Parameters"
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
                                         }
                                 });
     });
@@ -103,7 +106,8 @@ describe('middleware test', () => {
                                            `My Date is an invalid date. Must not be later than ${new Date().toDateString()}`,
                                            `My Date is an invalid date. Must not be further than ${new Date().toDateString()}`
                                          ],
-                                         message: "Invalid Parameters"
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
                                         }
                                 });
     });
@@ -124,13 +128,35 @@ describe('middleware test', () => {
                                         errors: [
                                            "tex is required",
                                          ],
-                                         message: "Invalid Parameters"
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
+                                        }
+                                });
+    });
+
+    it('it should validate the req to have wrong params', () => {
+        const validator = middleware(req, res, next)
+        .contains('email', '@gmail.com')
+        .isUUID('uuid')
+        .isEnum('pass', ['password', 'more'])
+        .check();
+
+
+        expect(validator).to.eql({ 
+                                    status: 400, 
+                                    body: {
+                                        errors: [
+                                            "email must include @gmail.com",
+                                            "pass must be be one of these: password,more"    
+                                         ],
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
                                         }
                                 });
     });
 });
 
-describe('middleware test', () => {
+describe('custom middleware test', () => {
     it('it should validate the req', () => {
         const validator = customMiddleware(req, res, next)
                             .hasElement('email')
@@ -164,7 +190,8 @@ describe('middleware test', () => {
                                            "tex is required",
                                            "date must be a boolean"
                                          ],
-                                         message: "Invalid Parameters"
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
                                         }
                                 });
     });
@@ -196,7 +223,8 @@ describe('middleware test', () => {
                                            'no number',
                                            'no special'
                                          ],
-                                         message: "Invalid Parameters"
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
                                         }
                                 });
     });
@@ -217,8 +245,118 @@ describe('middleware test', () => {
                                         errors: [
                                            "tex is required",
                                          ],
-                                         message: "Invalid Parameters"
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
                                         }
                                 });
+    });
+
+    it('it should validate the req to have wrong params', () => {
+        const validator = customMiddleware(req, res, next)
+        .contains('email', '@gmail.com')
+        .isUUID('uuid')
+        .isEnum('pass', ['password', 'more'])
+        .check();
+
+
+        expect(validator).to.eql({ 
+                                    status: 400, 
+                                    body: {
+                                        errors: [
+                                            "email must include @gmail.com",
+                                            "pass must be be one of these: password,more"    
+                                         ],
+                                         message: "Invalid Parameter(s)",
+                                         status: "error"
+                                        }
+                                });
+    });
+});
+
+describe('validate test', () => {
+    it('it should validate the req', () => {
+        const validator = validate(req.body)
+                            .hasElement('email')
+                            .isEmail()
+                            .isUrl('url')
+                            .isDate('date')
+                            .hasElement('text')
+                            .check();
+
+
+        expect(validator).to.eql(valid);
+    });
+
+    it('it should validate the req to be wrong', () => {
+        const validator = validate(req.body)
+                            .hasElement('email')
+                            .hasElement('tex')
+                            .hasSpaces('text')
+                            .isString('text')
+                            .isPhoneNumber('phone')
+                            .isDateFormat('date')
+                            .isBool('date')
+                            .isLength('text',2,'check')
+                            .check();
+
+
+        expect(validator).to.eql({
+            "errors": [
+                "tex is required",
+                "date must be a boolean"
+            ],
+            "valid": false });
+    });
+
+    it('it should validate the req to have wrong date', () => {
+        const validator = validate(req.body)
+                            .hasElement('email')
+                            .hasElement('tex')
+                            .isDatePast('myDate', 'My Date')
+                            .isDateFuture('myDat', 'My Date')
+                            .isPassword('password','Password',8,true,true,true)
+                            .check();
+
+
+        expect(validator).to.eql({ "errors": [
+                                    "tex is required"
+                                    ],
+                                    "valid": false
+                                });
+    });
+
+    it('it should validate the req to have wrong params', () => {
+        const validator = validate(req.body)
+                            .hasElement('email')
+                            .hasElement('tex')
+                            .isBool('amI')
+                            .isNumber('num')
+                            .isEmail()
+                            .check();
+
+        const { valid } = validator;
+        expect(validator).to.eql({ "errors": [
+                                        "tex is required"
+                                        ],
+                                        "valid": false
+                                    });
+        expect(valid).to.eql(false);
+    });
+
+    it('it should validate the req to have wrong params', () => {
+        const validator = validate(req.body)
+                            .contains('email', '@gmail.com')
+                            .isUUID('uuid')
+                            .isEnum('pass', ['password', 'more'])
+                            .check();
+
+        const { valid } = validator;
+        expect(validator).to.eql({ "errors": [
+                                        "email must include @gmail.com",
+                                        "pass must be be one of these: password,more"
+                                        ],
+                                        "valid": false
+                                    });
+        expect(valid).to.eql(false);
     });
 });

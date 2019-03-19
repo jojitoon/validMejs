@@ -1,6 +1,6 @@
 {
   "name": "valid_me_js",
-  "version": "1.0.2",
+  "version": "1.0.8",
   "description": "a validator middleware",
   "main": "./dist/index.js",
   "repository": "https://github.com/JojiAndela/validMejs.git",

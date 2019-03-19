@@ -1,13 +1,6 @@
 import isEmail from 'validator/lib/isEmail';
 
 const options = validate => ({
-  /** isEmail method: 
-   * @description check if the string is a valid email
-   * optional: supply name of key in body
-   * optional: supply variable for message contruction
-   * @param  {string} name
-   * @param  {string} variable,
-   */
   isEmail: (name='email', variable=name) => {
     checkAndPush(
       validate.req.body[name] && !isEmail(validate.req.body[name]),
@@ -114,7 +107,33 @@ const options = validate => ({
       return options(validate);
   },
 
+  contains: (item, sub, variable=item) => {
+    const val = validate.req.body[item];
+    checkAndPush(!val.includes(sub), `${variable} must include ${sub}`, validate);
+    return options(validate);
+  },
 
+  isEnum: (item, array, variable=item) => {
+    const val = validate.req.body[item];
+  
+    checkAndPush(
+      val && !array.includes(val),
+      `${variable} must be be one of these: ${array}`,
+      validate
+    );
+    return options(validate);
+  },
+
+  isUUID: (item, variable=item) => {
+    const uuidTest = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const val = validate.req.body[item];
+    checkAndPush(
+      val && !uuidTest.test(val),
+      `${variable} must be a UUID`,
+      validate
+    );
+    return options(validate);
+  },
   isDatePast: (date, variable=date, compare = new Date()) => {
     checkPast(date, compare, variable, validate, true);
     return options(validate);
@@ -127,17 +146,23 @@ const options = validate => ({
 
   check: () => {
     if (validate.errors.length > 0) {
-      return validate.res.status(400).send({
-        message: 'Invalid Parameters',
-        errors: validate.errors,
-      });
+
+      if(validate.messageFormat.data){
+        validate.messageFormat.data.errors = validate.errors;
+    } else {
+      validate.messageFormat.errors = validate.errors;
+    }
+      return validate.res.status(validate.status).send(validate.messageFormat);
     }
     return validate.next();
   },
 });
 
-const validate = (req, res, next) => options({
-  req, res, next, errors: [],
+const validate = (req, res, next, status=400, messageFormat = {
+  errors: null,
+  message: 'Invalid Parameter(s)',
+  status: 'error'}) => options({
+  req, res, next, errors: [], status, messageFormat
 });
 
 export default validate;

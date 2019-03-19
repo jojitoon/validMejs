@@ -4,7 +4,7 @@ const options = validate => ({
   
   isEmail: (name='email', message=`${name.charAt(0).toUpperCase() + name.slice(1)} must be a valid email`) => {
     checkAndPush(
-      validate.req.body[name] && !isEmail(validate.req.body[name]),
+      validate.req[name] && !isEmail(validate.req[name]),
       message,
       validate );
     return options(validate);
@@ -12,7 +12,7 @@ const options = validate => ({
 
   hasElement: (item, message=`${item} is required`) => {
     checkAndPush(
-      !validate.req.body[item],
+      !validate.req[item],
       message,
       validate
       );
@@ -21,7 +21,7 @@ const options = validate => ({
 
   isLength: (item, value, message=`${item} must have at least a length of ${value}`) => {
     checkAndPush(
-      validate.req.body[item] && validate.req.body[item].replace(/\s/g, '').length < value,
+      validate.req[item] && validate.req[item].replace(/\s/g, '').length < value,
       message,
       validate
     );
@@ -30,7 +30,7 @@ const options = validate => ({
 
   hasSpaces: (item, message=`${item} must not have spaces`)=> {
     checkAndPush(
-      validate.req.body[item] && /\s/.test(validate.req.body[item]),
+      validate.req[item] && /\s/.test(validate.req[item]),
       message,
       validate
     );
@@ -38,13 +38,13 @@ const options = validate => ({
   },
 
   isBool: (item, message=`${item} must be a boolean`) => {
-    checkTypeOf(validate.req.body[item], 'boolean', message, validate);
+    checkTypeOf(validate.req[item], 'boolean', message, validate);
     return options(validate)
   },
 
   isNumber: (item, message=`${item} must be a number`) => {
     checkAndPush(
-      typeof validate.req.body[item] !== 'number' || isNaN(validate.req.body[item]),
+      typeof validate.req[item] !== 'number' || isNaN(validate.req[item]),
       message,
       validate
     );
@@ -52,7 +52,7 @@ const options = validate => ({
   },
 
   isString: (item, message=`${item} must be a string`) => {
-    checkTypeOf(validate.req.body[item], 'string', message, validate);
+    checkTypeOf(validate.req[item], 'string', message, validate);
     return options(validate)
   },
 
@@ -65,16 +65,16 @@ const options = validate => ({
     const upper = /[A-Z]/g;
     const num = /[0-9]/g;
     const special = /[!@#$%^&*(),.?":{}|<>]/g;
-    checkAndPush(validate.req.body[item] && validate.req.body[item].length < length, message.length, validate);
+    checkAndPush(validate.req[item] && validate.req[item].length < length, message.length, validate);
     
     if(hasUpper){
-      checkAndPush(validate.req.body[item] && !upper.test(validate.req.body[item]), message.upper, validate);
+      checkAndPush(validate.req[item] && !upper.test(validate.req[item]), message.upper, validate);
     }
     if(hasNumber){
-      checkAndPush(validate.req.body[item] && !num.test(validate.req.body[item]), message.number, validate);
+      checkAndPush(validate.req[item] && !num.test(validate.req[item]), message.number, validate);
     }
     if(hasSpecial){
-      checkAndPush(validate.req.body[item] && !special.test(validate.req.body[item]), message.special , validate);
+      checkAndPush(validate.req[item] && !special.test(validate.req[item]), message.special , validate);
     }
     return options(validate)
   },
@@ -84,7 +84,7 @@ const options = validate => ({
     const phone = new RegExp(pattern, 'g');
 
     checkAndPush(
-       validate.req.body[item] && !phone.test(validate.req.body[item]), 
+       validate.req[item] && !phone.test(validate.req[item]), 
        message, validate);
     return options(validate)  
   },
@@ -93,7 +93,7 @@ const options = validate => ({
   const date = /^((0?[13578]|10|12)(-|\/)(([1-9])|(0[1-9])|([12])([0-9]?)|(3[01]?))(-|\/)((19)([2-9])(\d{1})|(20)([01])(\d{1})|([8901])(\d{1}))|(0?[2469]|11)(-|\/)(([1-9])|(0[1-9])|([12])([0-9]?)|(3[0]?))(-|\/)((19)([2-9])(\d{1})|(20)([01])(\d{1})|([8901])(\d{1})))$/g;
     
      checkAndPush(
-       validate.req.body[item] && !date.test(validate.req.body[item]), 
+       validate.req[item] && !date.test(validate.req[item]), 
        message, validate);
     return options(validate)
   },
@@ -102,25 +102,25 @@ const options = validate => ({
     const url = /(http[s]?:\/\/)?[^\s(["<,>]*\.[^\s[",><]*/igm;
 
      checkAndPush(
-       validate.req.body[item] && !url.test(validate.req.body[item]), 
+       validate.req[item] && !url.test(validate.req[item]), 
        message, validate);
     return options(validate)
   },
 
   isDate: (item, message=`${item} must be a date`) => {
-      const date = new Date(validate.req.body[item]);
+      const date = new Date(validate.req[item]);
       checkAndPush(date.toDateString() === 'Invalid Date', message, validate);
       return options(validate);
   },
 
   contains: (item, sub, message=`${item} must include ${sub}`) => {
-    const val = validate.req.body[item];
+    const val = validate.req[item];
     checkAndPush(!val.includes(sub), message, validate);
     return options(validate);
   },
 
   isEnum: (item, array, message=`${item} must be be one of these: ${array}`) => {
-    const val = validate.req.body[item];
+    const val = validate.req[item];
   
     checkAndPush(
       val && !array.includes(val),
@@ -132,7 +132,7 @@ const options = validate => ({
 
   isUUID: (item, message= `${item} must be a UUID`) => {
     const uuidTest = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    const val = validate.req.body[item];
+    const val = validate.req[item];
     checkAndPush(
       val && !uuidTest.test(val),
       message,
@@ -153,23 +153,14 @@ const options = validate => ({
 
   check: () => {
       if (validate.errors.length > 0) {
-  
-        if(validate.messageFormat.data){
-          validate.messageFormat.data.errors = validate.errors;
-      } else {
-        validate.messageFormat.errors = validate.errors;
+        return {valid: false, errors: validate.errors}
       }
-        return validate.res.status(validate.status).send(validate.messageFormat);
-      }
-      return validate.next();
+      return { valid: true, errors: validate.errors };
     },
   });
   
-  const validate = (req, res, next, status=400, messageFormat = {
-    errors: null,
-    message: 'Invalid Parameter(s)',
-    status: 'error'}) => options({
-    req, res, next, errors: [], status, messageFormat
+  const validate = (req) => options({
+    req, errors: []
   });
   
 
@@ -188,7 +179,7 @@ const checkAndPush = (condition, message, validate) => {
 };
 
 const checkPast = (date, compare, validate, check=false, message) => {
-    const checkDate = new Date(validate.req.body[date]);
+    const checkDate = new Date(validate.req[date]);
     const today = new Date(compare);
 
     checkDate.setUTCHours(0);
