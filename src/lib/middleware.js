@@ -109,7 +109,7 @@ const options = validate => ({
 
   contains: (item, sub, variable=item) => {
     const val = validate.req.body[item];
-    checkAndPush(!val.includes(sub), `${variable} must include ${sub}`, validate);
+    checkAndPush(val && !val.includes(sub), `${variable} must include ${sub}`, validate);
     return options(validate);
   },
 

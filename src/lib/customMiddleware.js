@@ -115,7 +115,7 @@ const options = validate => ({
 
   contains: (item, sub, message=`${item} must include ${sub}`) => {
     const val = validate.req.body[item];
-    checkAndPush(!val.includes(sub), message, validate);
+    checkAndPush(val && !val.includes(sub), message, validate);
     return options(validate);
   },
 
