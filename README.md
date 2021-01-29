@@ -1,18 +1,19 @@
 # validMejs 
-your middleware validating assistant. just super easy and flexible...
 
 [![Build Status](https://www.travis-ci.org/JojiAndela/validMejs.svg?branch=develop)](https://www.travis-ci.org/JojiAndela/validMejs) [![Maintainability](https://api.codeclimate.com/v1/badges/5de500b6c2c9c3a07f35/maintainability)](https://codeclimate.com/github/JojiAndela/validMejs/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/5de500b6c2c9c3a07f35/test_coverage)](https://codeclimate.com/github/JojiAndela/validMejs/test_coverage)
 
+> Node.js middleware validating assistant. Just super easy and flexible...
 
 # Installation
-```bash
-npm install valid_me_js
+
+```sh
+$ npm install valid_me_js
 ```
 Also make sure that you have Node.js 6 or newer in order to use it.
 
 # How to use
 
-```javascript
+```js
 import { middleware } from 'valid_me_js';
 
 const signUpValidator = (req, res, next) => {
@@ -44,7 +45,7 @@ export { signUpValidator, signInValidator };
 ```
 then you can use it in the express router like this
 
-``` javascript
+```js
 import express from 'express';
 import user from '../controllers/users';
 import { signUpValidator, signInValidator } from '../middlewares/validator';
@@ -58,7 +59,8 @@ router.post('/new', signUpValidator, signup);
 
 export default router;
 ```
-and get errors as 
+and get errors as
+
 ```json
 {
   "errors": [
@@ -73,6 +75,7 @@ and get errors as
     "message": "Invalid Parameters"
 }
 ```
+
 # Changelog
 Check the [GitHub Releases page](https://github.com/JojiAndela/validMejs/releases).
 
@@ -83,4 +86,4 @@ Bug reports and pull requests are welcome on GitHub at [https://github.com/jojiA
 MIT License
 
 # Code of Conduct
-Everyone interacting in the NgBanks project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/%5BUSERNAME%5D/validmejs/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the validmejs project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/jojiAndela/validmejs/blob/develop/CODE_OF_CONDUCT.md).
